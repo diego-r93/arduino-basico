@@ -1,4 +1,4 @@
-// Projeto 32
+// Projeto 32 - Barógrafo digital
 
 #include <glcd.h>
 #include "Fonts/allFonts.h"
@@ -100,16 +100,55 @@ void loop()
 
 void drawPoints(int position)
 {
+  dots[dotCursor] = (int) baroPressure/100;
+  int midscale = dots[dotCursor];       // Centraliza a escala do gráfico na leitura atual
+  GLC.FillRect(2, 2, 123, 40, WHITE);   // Limpa a área do gráfico
 
+  for (int x = 0; x < 124; x++)
+  {
+    // Limita a região do gráfico
+    int y = constrain(22 - ((dots[position] - midscale)), 0, 44);
+    GLCD.SetDot(125 - x, y, BLACK);
+    position--;
+    if (position < 0)
+    {
+      position = 123;
+    }
+  }
+  dotCursor++;
+  if (dotCursor > 123)
+  {
+    dotCursor = 0;
+  }
 }
 
+// Calcula a tendência desde o último ponto de dados e imprime
 void printTrend()
 {
+  int dotCursor2 = dotCursor - 1;
+
+  if (dotCursor2 < 0)
+    dotCursor2 = 123;
   
+  int val1 = dots[dotCursor2];
+  int dotCursor3 = dotCursor2 - 1;
+
+  if (dotCursor3 < 0)
+    dotCursor3 = 123;
+  
+  int val2 = dots[dotCursor3];
+
+  if (val1 > val 2)
+    GLCD.print("RISING ");
+
+  if (val1 == val 2)
+    GLCD.print("STEADY ");
+
+  if (val1 < val 2)
+    GLCD.print("FALING ");
 }
 
 // Função para fazer a leitura de pressão e temperatura
-
 void ReadSensorData()
 {
   float tempPressure;
@@ -154,7 +193,6 @@ float calcPressure()
 }
 
 // Essa função reúne a leitura da temperatura dos valores no buffer de entrada
-
 float calcTemperature()
 {
   int mTemp;
